@@ -34,6 +34,8 @@ const propTypes = {
   cornerRadius: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
   onMouseMove: PropTypes.func,
   onMouseLeave: PropTypes.func,
+  onClick: PropTypes.func,
+  centerValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 const INNER_RADIUS_FRACTION = 0.5;
@@ -58,6 +60,9 @@ const defaultProps = {
   padRadius: null,
   onMouseMove: null,
   onMouseLeave: null,
+  onClick: null,
+  centerValue: null,
+  centerValueLabel: null,
 };
 
 export default function ArcSeries({
@@ -114,9 +119,38 @@ export default function ArcSeries({
             onMouseLeave();
           })
         }
+        onClick={
+          onClick &&
+          (d => event => {
+            const { key: seriesKey, data: datum } = d;
+            onClick({
+              event,
+              data,
+              datum,
+              seriesKey,
+            });
+          })
+        }
         {...restProps}
         centroid={null}
       />
+      {centerValue && centerValueLabel && (
+        <g key={`totalValue`}>
+          <text
+            fill="black"
+            textAnchor="middle"
+            fontSize={22}>
+              {centerValue}
+          </text>
+          <text
+            fill="black"
+            textAnchor="middle"
+            fontSize={14}
+            transform="translate(0,20)">
+              {centerValueLabel}
+            </text>
+        </g>
+      )}
       {label && labelComponent && (
         <Arc
           data={data}
